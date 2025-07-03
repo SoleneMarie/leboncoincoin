@@ -1,3 +1,5 @@
+const { ApplicationError } = require("@strapi/utils").errors;
+
 module.exports = async (policyContext, config, { strapi }) => {
   const userId = policyContext.state.user.id;
   let offerOwnerId = "";
@@ -15,8 +17,8 @@ module.exports = async (policyContext, config, { strapi }) => {
   }
 
   if (offerOwnerId !== userId) {
-    return policyContext.unauthorized(
-      "Vous n'êtes pas autorisé à modifier cette offre."
+    throw new ApplicationError(
+      "Vous n'êtes pas autorisé à poster cette offre."
     );
   }
   return true;

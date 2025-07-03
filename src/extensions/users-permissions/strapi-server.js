@@ -11,7 +11,7 @@ module.exports = (plugin) => {
         "plugin::users-permissions.user",
         { filters: { username: ctx.request.body.username } }
       );
-      console.log("user:", user);
+
       // Upload de l'image, en local ou sur cloudinary, et lien du user à l'image
       await strapi.plugins.upload.services.upload.upload({
         data: {
