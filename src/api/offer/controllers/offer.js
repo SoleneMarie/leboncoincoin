@@ -49,28 +49,35 @@ module.exports = createCoreController("api::offer.offer", ({ strapi }) => ({
   },
 
   async buy(ctx) {
-    const bodyAmount = ctx.request.body.amount || 50;
-    const bodyTitle = ctx.request.body.title || "Article inconnu";
-    const bodySource = ctx.request.body.source || "source inconnue";
-
-    if (bodyAmount < 0.5) {
-      return ctx.badRequest("Montant trop faible pour un paiement Stripe");
+    const bodyAmount = ctx.request.body.amount;
+    if (!bodyAmount || isNaN(bodyAmount) || bodyAmount <= 1) {
+      return ctx.badRequest("Montant invalide");
     }
-
+    const bodyTitle = ctx.request.body.title || "Article inconnu";
     try {
-      const { status } = await stripe.charges.create({
-        amount: bodyAmount * 100, // en centimes
-        currency: "eur",
-        description: `Paiement le bon coin pour : ${bodyTitle}`,
-        source: bodySource,
+      const session = await stripe.checkout.sessions.create({
+        payment_method_types: ["card"],
+        line_items: [
+          {
+            price_data: {
+              currency: "eur",
+              product_data: {
+                name: bodyTitle,
+              },
+              unit_amount: bodyAmount * 100,
+            },
+            quantity: 1,
+          },
+        ],
+        mode: "payment",
+        success_url: "http://localhost:5173/success",
+        cancel_url: "http://localhost:5173/cancel",
       });
 
-      console.log("Stripe status:", status);
-
-      return { status };
-    } catch (error) {
+      return { id: session.id };
+    } catch (err) {
       ctx.response.status = 500;
-      return { message: error.message };
+      return { error: err.message };
     }
   },
 }));
