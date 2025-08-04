@@ -49,32 +49,22 @@ module.exports = createCoreController("api::offer.offer", ({ strapi }) => ({
   },
 
   async buy(ctx) {
-    const bodyAmount = ctx.request.body.amount;
-    if (!bodyAmount || isNaN(bodyAmount) || bodyAmount <= 1) {
+    const { amount, title, token } = ctx.request.body;
+    if (!amount || isNaN(amount) || amount <= 1) {
       return ctx.badRequest("Montant invalide");
     }
-    const bodyTitle = ctx.request.body.title || "Article inconnu";
+    if (!token) {
+      return ctx.badRequest("Token de paiement manquant");
+    }
     try {
-      const session = await stripe.checkout.sessions.create({
-        payment_method_types: ["card"],
-        line_items: [
-          {
-            price_data: {
-              currency: "eur",
-              product_data: {
-                name: bodyTitle,
-              },
-              unit_amount: bodyAmount * 100,
-            },
-            quantity: 1,
-          },
-        ],
-        mode: "payment",
-        success_url: "http://localhost:5173/success",
-        cancel_url: "http://localhost:5173/cancel",
+      const charge = await stripe.charges.create({
+        amount: amount * 100,
+        currency: "eur",
+        description: `Paiement pour l'article : ${title}`,
+        source: token, // <- ici c’est le token Stripe Elements envoyé par le front
       });
 
-      return { id: session.id };
+      return { status: charge.status };
     } catch (err) {
       ctx.response.status = 500;
       return { error: err.message };
