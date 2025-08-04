@@ -20,13 +20,15 @@
     "@strapi/plugin-users-permissions": "4.25.11",
     "@strapi/provider-upload-cloudinary": "^5.17.0",
     "@strapi/strapi": "4.25.11",
+    "@stripe/stripe-js": "^7.8.0",
+    "direction": "^2.0.1",
     "pg": "^8.16.3",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-router-dom": "5.3.4",
+    "stripe": "^18.4.0",
     "styled-components": "5.3.3"
   },
-  "devDependencies": {},
   "engines": {
     "node": "20.0.0",
     "npm": "8.5.5"
