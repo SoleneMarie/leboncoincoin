@@ -50,7 +50,8 @@ module.exports = createCoreController("api::offer.offer", ({ strapi }) => ({
 
   async buy(ctx) {
     const { amount, title, token } = ctx.request.body;
-    if (!amount || isNaN(amount) || amount <= 1) {
+
+    if (!amount || isNaN(amount) || amount < 1) {
       return ctx.badRequest("Montant invalide");
     }
     if (!token) {
