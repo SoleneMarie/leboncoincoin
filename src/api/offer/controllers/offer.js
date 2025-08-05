@@ -11,15 +11,16 @@ const stripe = new Stripe(process.env.STRIPE_API_SECRET);
 module.exports = createCoreController("api::offer.offer", ({ strapi }) => ({
   async deleteAll(ctx) {
     try {
-      const userId = ctx.state.user.id;
-
       if (!ctx.state.user) {
         return ctx.unauthorized("Authentication required");
       }
 
+      const userId = ctx.state.user.id;
+      console.log(userId);
+
       const offers = await strapi.entityService.findMany("api::offer.offer", {
         filters: {
-          user: userId,
+          owner: userId,
         },
       });
 
