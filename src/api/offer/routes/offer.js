@@ -17,8 +17,5 @@ module.exports = createCoreRouter("api::offer.offer", {
     delete: {
       policies: ["api::offer.is-authorized"],
     },
-    deleteAll: {
-      policies: ["api::offer.is-authorized"],
-    },
   },
 });

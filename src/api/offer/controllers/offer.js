@@ -16,8 +16,7 @@ module.exports = createCoreController("api::offer.offer", ({ strapi }) => ({
       }
 
       const userId = ctx.state.user.id;
-      console.log(userId);
-
+      
       const offers = await strapi.entityService.findMany("api::offer.offer", {
         filters: {
           owner: userId,
